@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "stdio.h": "c",
+        "_mingw.h": "c",
+        "stdarg.h": "c",
+        "string.h": "c",
+        "strings.h": "c"
+    }
+}
