@@ -137,7 +137,7 @@ void remover_nos_repetidos(Lista **lista) {
     }
 }
 
-void concatenar(Lista **lista1, Lista **lista2) { 
+void concatenar(Lista **lista1, Lista **lista2) {
     if (*lista1 == NULL) {
         *lista1 = *lista2;
     } else {
@@ -149,6 +149,43 @@ void concatenar(Lista **lista1, Lista **lista2) {
     }
     printf("\nLista concatenada: ");
     printar_lista(*lista1);
+}
+
+void imprimir_sequencia(Lista **lista, int n){
+    Lista *atual = *lista;
+    Lista *anterior = NULL;
+
+    while (atual != NULL && atual->numero != n) {
+        anterior = atual;
+        atual = atual->proximo;
+    }
+
+    if (atual == NULL) {
+        printf("Número não encontrado na lista.\n");
+        return;
+    }
+
+    for (int i = 1; i <= n; i++) {
+        Lista *novo = (Lista *)malloc(sizeof(Lista));
+        novo->numero = i; 
+        if (anterior == NULL) {
+            novo->proximo = *lista;
+            *lista = novo;
+        } else {
+            novo->proximo = anterior->proximo;
+            anterior->proximo = novo;
+        }
+        anterior = novo;
+    }
+
+    Lista *proximo = atual->proximo;
+    for (int i = 1; i <= n; i++) {
+        Lista *novo = (Lista *)malloc(sizeof(Lista));
+        novo->numero = i;
+        novo->proximo = proximo;
+        atual->proximo = novo;
+        atual = novo;
+    }   
 }
 
 void string_intersecao(Lista **lista1, Lista **lista2) {
@@ -197,6 +234,7 @@ void menu() {
     printf("9. Concatenar listas\n");
     printf("10. Intersecao de listas\n");
     printf("11. Liberar lista\n");
+    printf("12. Imprimir sequencia\n");
     printf("0. Sair\n");
     printf("Escolha uma opcao: ");
 }
@@ -258,6 +296,12 @@ int main()
             case 11:
                 liberar_lista(list_encadeda);
                 list_encadeda = iniciar();
+                break;
+            case 12:
+                printf("Digite o valor de n: ");
+                scanf("%d", &valor);
+                imprimir_sequencia(&list_encadeda, valor);
+                printar_lista(list_encadeda);
                 break;
             case 0:
                 liberar_lista(list_encadeda);

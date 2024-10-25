@@ -95,15 +95,15 @@ void soma_lista(Lista *lista, int soma){
     printf("\nSoma: %d\nMedia: %.2f\n", soma, media);
 }
 
-void liberar_lista(Lista *lista) {
-    Lista *atual = lista;
-    Lista *proximo;
+void liberar_lista(Lista **lista) {
+    Lista *atual = *lista;
 
     while (atual != NULL) {
-        proximo = atual->proximo;
+        atual = *lista;
+        lista = &(*lista)->proximo;
         free(atual);
-        atual = proximo;
     }
+    free(lista);
 }
 
 int main()
@@ -119,7 +119,7 @@ int main()
 
     soma_lista(list_encadeda, 0);
 
-    liberar_lista(list_encadeda);
+    liberar_lista(&list_encadeda);
 
     return 0;
 }
