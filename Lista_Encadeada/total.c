@@ -219,8 +219,7 @@ void intersecao(Lista **lista1, Lista **lista2)
         {
             if (temp1->num == temp2->num)
             {
-                adicionar_elemento(&intersecao, temp1
-                                                    ->num);
+                adicionar_elemento(&intersecao, temp1->num);
                 break;
             }
             temp2 = temp2->prox;
