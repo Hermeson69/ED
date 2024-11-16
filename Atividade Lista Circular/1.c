@@ -174,37 +174,78 @@ void remover(Lista **lista, int valor)
     printf("Elemento %d não encontrado.\n", valor);
 }
 
-void removerDuplicados(Lista **lista) {
-    if (*lista == NULL) {
-        printf("Lista vazia.\n");
-        return;
+int pulo(Lista **lista, int n)
+{
+   if (*lista == NULL)
+    {
+        printf("Lista Vazia\n");
+        return -1;
     }
 
     Lista *atual = *lista;
+    Lista *anterior = NULL;
 
-    do {
-        Lista *anterior = atual; // Mantém o elemento anterior no loop interno
-        Lista *verificador = atual->prox; // Começa a verificar a partir do próximo elemento
+    // Encontrar o último elemento para formar a lista circular corretamente
+    do
+    {
+        anterior = atual;
+        atual = atual->prox;
+    } while (atual != *lista);
 
-        while (verificador != *lista) { // Percorre até retornar ao início
-            if (verificador->num == atual->num) {
-                // Encontrou um duplicado
-                anterior->prox = verificador->prox; // Remove o duplicado da lista
-                free(verificador); // Libera a memória do duplicado
-                verificador = anterior->prox; // Continua verificando o próximo elemento
-            } else {
-                // Avança os ponteiros
-                anterior = verificador;
-                verificador = verificador->prox;
-            }
+    while ((*lista)->prox != *lista)
+    {
+        // Avança na lista `n` vezes
+        for (int i = 1; i < n; i++)
+        {
+            anterior = atual;
+            atual = atual->prox;
         }
-        atual = atual->prox; // Avança para o próximo elemento
-    } while (atual != *lista); // Continua enquanto não retornar ao início
 
-    printf("Duplicados removidos.\n");
+        printf("Removendo posicao: %d\n", atual->posicao);
+
+        
+        remover(lista, atual->num);
+
+        
+        atual = anterior->prox;
+    }
+
+    
+    int ultima_posicao = (*lista)->posicao;
+
+    printf("Ultima posicao restante: %d\n", ultima_posicao);
+    return ultima_posicao;
 }
 
+// void removerDuplicados(Lista **lista) {
+//     if (*lista == NULL) {
+//         printf("Lista vazia.\n");
+//         return;
+//     }
 
+//     Lista *atual = *lista;
+
+//     do {
+//         Lista *anterior = atual; // Mantém o elemento anterior no loop interno
+//         Lista *verificador = atual->prox; // Começa a verificar a partir do próximo elemento
+
+//         while (verificador != *lista) { // Percorre até retornar ao início
+//             if (verificador->num == atual->num) {
+//                 // Encontrou um duplicado
+//                 anterior->prox = verificador->prox; // Remove o duplicado da lista
+//                 free(verificador); // Libera a memória do duplicado
+//                 verificador = anterior->prox; // Continua verificando o próximo elemento
+//             } else {
+//                 // Avança os ponteiros
+//                 anterior = verificador;
+//                 verificador = verificador->prox;
+//             }
+//         }
+//         atual = atual->prox; // Avança para o próximo elemento
+//     } while (atual != *lista); // Continua enquanto não retornar ao início
+
+//     printf("Duplicados removidos.\n");
+// }
 
 void soma_lista(Lista *lista)
 {
@@ -286,6 +327,7 @@ void menu()
     printf("9. Concatenar listas\n");
     // printf("10. Intersecao de listas\n");
     printf("11. Liberar lista\n");
+    printf("12. Pulo\n");
     printf("0. Sair\n");
     printf("Escolha uma opcao: ");
 }
@@ -337,7 +379,7 @@ int main()
             break;
         case 8:
 
-            removerDuplicados(&list_encadeda); // Implementar esta função
+            // removerDuplicados(&list_encadeda); // Implementar esta função
             break;
         case 9:
             criar_lista(&list_encadeda2);
@@ -349,6 +391,11 @@ int main()
         case 11:
             liberar(&list_encadeda);
             list_encadeda = inicio();
+            break;
+        case 12:
+            printf("Digite o valor de n para o pulo: ");
+            scanf("%d", &valor);
+            pulo(&list_encadeda, valor);
             break;
         case 0:
             liberar(&list_encadeda);
