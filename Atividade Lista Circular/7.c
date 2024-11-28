@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TAM 10
 
 typedef struct LISTA{
     int num;
@@ -35,6 +34,8 @@ void adicionar_elemento(LISTA **lista, int valor){
 
 void criar_lista(LISTA **lista){
     int valor;
+    int TAM;
+    scanf("%d", &TAM);
     for (int i = 0; i < TAM; i++) {
         printf("Digite o valor para o elemento %d: ", i + 1);
         scanf("%d", &valor);
@@ -58,45 +59,79 @@ int printar(LISTA *lista){
     return cont;
 }
 
-void bubble_sort(LISTA **lista){
-    if (*lista == NULL)
-        return;
-    int trocado;
-    do {
-        trocado = 0;
-        LISTA *atual = *lista;
-        while (atual->prox != *lista) {
-            if (atual->num > atual->prox->num) {
-                int temp = atual->num;
-                atual->num = atual->prox->num;
-                atual->prox->num = temp;
-                trocado = 1;
-            }
-            atual = atual->prox;
-        }
-    } while (trocado);
-}
+// void bubble_sort(LISTA **lista){
+//     if (*lista == NULL)
+//         return;
+//     int trocado;
+//     do {
+//         trocado = 0;
+//         LISTA *atual = *lista;
+//         while (atual->prox != *lista) {
+//             if (atual->num > atual->prox->num) {
+//                 int temp = atual->num;
+//                 atual->num = atual->prox->num;
+//                 atual->prox->num = temp;
+//                 trocado = 1;
+//             }
+//             atual = atual->prox;
+//         }
+//     } while (trocado);
+// }
 
-void duas_listas_ordenadas(LISTA **lista1, LISTA **lista2){
-    if (*lista1 == NULL || *lista2 == NULL) {
-        printf("Uma das listas está vazia.\n");
-        return;
-    }
+// void duas_listas_ordenadas(LISTA **lista1, LISTA **lista2){
+//     if (*lista1 == NULL || *lista2 == NULL) {
+//         printf("Uma das listas está vazia.\n");
+//         return;
+//     }
+
+//     LISTA *atual1 = *lista1;
+//     while (atual1->prox != *lista1) {
+//         atual1 = atual1->prox;
+//     }
+
+//     LISTA *atual2 = *lista2;
+//     while (atual2->prox != *lista2) {
+//         atual2 = atual2->prox;
+//     }
+
+//     atual1->prox = *lista2;
+//     atual2->prox = *lista1;
+
+//     bubble_sort(lista1);
+// }
+
+void intercalar(LISTA **lista1, LISTA **lista2){
+    if(*lista1 == NULL) return;
+    if(*lista2 == NULL) return;
 
     LISTA *atual1 = *lista1;
-    while (atual1->prox != *lista1) {
-        atual1 = atual1->prox;
-    }
-
     LISTA *atual2 = *lista2;
-    while (atual2->prox != *lista2) {
-        atual2 = atual2->prox;
+    LISTA *prox1, *prox2;
+
+    while(atual1->prox != *lista1 && atual2->prox != *lista2){
+        prox1 = atual1->prox; // Guarda o proximo elemento da lista 1
+        prox2 = atual2->prox; // Guarda o proximo elemento da lista 2
+
+        atual1->prox = atual2; // Faz o proximo elemento da lista 1 ser o atual da lista 2
+        atual2->prox = prox1; // Faz o proximo elemento da lista 2 ser o proximo da lista 1
+
+        atual1 = prox1; // Atualiza o atual da lista 1
+        atual2 = prox2; // Atualiza o atual da lista 2
     }
 
-    atual1->prox = *lista2;
-    atual2->prox = *lista1;
-
-    bubble_sort(lista1);
+    if(atual1->prox == *lista1){ 
+        atual1->prox = atual2; // Faz o proximo elemento da lista 1 ser o atual da lista 2
+        while(atual2->prox != *lista2){ 
+            atual2 = atual2->prox; // Atualiza o atual da lista 2
+        }
+        atual2->prox = *lista1; // Faz o proximo elemento da lista 2 ser o inicio da lista 1
+    } else if(atual2->prox == *lista2){
+        atual2->prox = atual1; // Faz o proximo elemento da lista 2 ser o atual da lista 1
+        while(atual1->prox != *lista1){ 
+            atual1 = atual1->prox; // Atualiza o atual da lista 1
+        }
+        atual1->prox = *lista2; // Faz o proximo elemento da lista 1 ser o inicio da lista 2
+    }
 }
 
 void liberar(LISTA **lista){
@@ -167,7 +202,7 @@ int main(){
             printar(lista2);
             break;
         case 7:
-            duas_listas_ordenadas(&lista1, &lista2);
+            intercalar(&lista1, &lista2);
             printf("\nLista combinada e ordenada: ");
             printar(lista1);
             break;
