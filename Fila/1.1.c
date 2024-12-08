@@ -59,7 +59,7 @@ int remover(fila **inicio)
 {
     fila *atual = *inicio;
     if (atual->frente == NULL)
-    {
+    {  
         printf("Fila Vazia\n");
         exit(-1);
     }
