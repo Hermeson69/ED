@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TAM 10
-
 typedef struct LISTA
 {
     int num;
@@ -42,15 +40,14 @@ void adicionar_elemento(LISTA **lista, int valor)
 
 void criar_lista(LISTA **lista)
 {
-    int valor;
-    for (int i = 0; i < TAM; i++)
+    int num;
+    while (scanf("%d", &num) == 1)
     {
-        printf("Valor do no: %d: ", i + 1);
-        scanf("%d", &valor);
-        adicionar_elemento(lista, valor);
+        adicionar_elemento(lista, num);
     }
+    while (getchar() != '\n')
+        ;
 }
-
 int printar(LISTA *lista)
 {
 
@@ -82,10 +79,11 @@ void insercao(LISTA **lista1, LISTA **lista2)
 
     LISTA *temp1 = *lista1;
     LISTA *temp2 = *lista2;
-    int found = 0;
+    int found;
 
     do
     {
+        found = 0;
         temp2 = *lista2;
         do
         {
