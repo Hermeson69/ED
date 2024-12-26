@@ -74,30 +74,40 @@ int printar(LISTA *lista)
 
 void insercao(LISTA **lista1, LISTA **lista2)
 {
-     if (lista1 == NULL || lista2 == NULL)
+    if (*lista1 == NULL || *lista2 == NULL)
     {
         printf("Uma das listas está vazia.\n");
         return;
     }
-    else
-    {
-        LISTA *temp1 = *lista1;
 
-        while (temp1 != *lista1)
+    LISTA *temp1 = *lista1;
+    LISTA *temp2 = *lista2;
+    int found = 0;
+
+    do
+    {
+        temp2 = *lista2;
+        do
         {
-            LISTA *temp2 = *lista2;
-            while (temp2 != *lista2)
+            if (temp1->num == temp2->num)
             {
-                if (temp1->num == temp2->num)
-                {
-                    break;
-                }
-                temp2 = temp2->prox;
+                found = 1;
+                break;
             }
-            temp1 = temp1->prox;
+            temp2 = temp2->prox;
+        } while (temp2 != *lista2);
+
+        if (!found)
+        {
+            printf("Numero %d da lista 1 nao encontrado na lista 2.\n", temp1->num);
         }
+        temp1 = temp1->prox;
+    } while (temp1 != *lista1);
+
+    if (found)
+    {
+        printf("Todos os numeros da lista 1 foram encontrados na lista 2.\n");
     }
-    printf("Lista 1 em Lista 2\n");
 }
 
 
