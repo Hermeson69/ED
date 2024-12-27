@@ -106,26 +106,22 @@ void liberar_segundo_maior(LISTA **lista)
     LISTA *atual = *lista;
     if (atual == NULL || atual->prox == NULL)
     {
-        printf("Lista não possue elementos!\n");
-        exit(-1);
+        printf("Lista nao possui elementos suficientes!\n");
+        return;
     }
 
     int maior = atual->num;
+    int segundo = atual->num;
     atual = atual->prox;
+
     while (atual != NULL)
     {
         if (atual->num > maior)
         {
+            segundo = maior;
             maior = atual->num;
         }
-        atual = atual->prox;
-    }
-
-    int segundo = -1;
-    atual = *lista;
-    while (atual != NULL)
-    {
-        if (atual->num != maior && atual->num > segundo && atual->num < maior)
+        else if (atual->num > segundo && atual->num < maior)
         {
             segundo = atual->num;
         }
@@ -147,26 +143,16 @@ void liberar_segundo_maior(LISTA **lista)
             }
 
             if (atual->prox != NULL)
-                atual->prox->ant = atual->ant;
-            LISTA *temp = atual;
-            if (atual->ant != NULL)
-            {
-                atual->ant->prox = atual->prox;
-            }
-            else
-            {
-                *lista = atual->prox;
-            }
-
-            if (atual->prox != NULL)
             {
                 atual->prox->ant = atual->ant;
             }
-            free(temp);
-            break;
+            free(atual);
+            printf("Elemento %d removido.\n", segundo);
+            return;
         }
         atual = atual->prox;
     }
+    printf("Segundo maior elemento nao encontrado.\n");
 }
 void inserir_valores(LISTA **lista) {
     int valor;
