@@ -159,7 +159,6 @@ void inserir_valores(LISTA **lista) {
     printf("Digite um valor (ou -1 para parar): ");
     while (scanf("%d", &valor) && valor != -1) {
         adicionar_elemento(lista, valor);
-        printf("Digite um valor (ou -1 para parar): ");
     }
 }
 
