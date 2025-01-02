@@ -2,62 +2,59 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct Pilha{
+typedef struct Pilha {
     int num;
     struct Pilha *prox;
-}Pilha;
+} Pilha;
 
-void adicionar (Pilha **pilha, int valor){
+typedef struct Topo {
+    Pilha *topo;
+} Topo;
+
+void adicionar(Topo *topo, int valor) {
     Pilha *no = (Pilha *)malloc(sizeof(Pilha));
     no->num = valor;
-    no->prox = *pilha;
-    *pilha = no;
+    no->prox = topo->topo;
+    topo->topo = no;
 }
 
-void criar(Pilha **pilha){
+void criar(Topo *topo) {
     int num;
-    while (scanf("%d\n", &num) == 1)
-    {
-        adicionar(pilha, num);
+    while (scanf("%d", &num) == 1) {
+        adicionar(topo, num);
     }
     while (getchar() != '\n')
         ;
 }
 
-
-void listar(Pilha *pilha)
-{
-    if (pilha == NULL)
-    {
-        printf("Pilha Vazia");
+void listar(Topo *topo) {
+    if (topo->topo == NULL) {
+        printf("Pilha Vazia\n");
         return;
     }
-    Pilha *atual = pilha;
-    do
-    {
+    Pilha *atual = topo->topo;
+    while (atual != NULL) {
         printf("%d -> ", atual->num);
         atual = atual->prox;
-    } while (atual != NULL);
+    }
     printf("INICIO\n");
 }
 
-int pop(Pilha **pilha)
-{
-    if (*pilha == NULL)
-    {
+int pop(Topo *topo) {
+    if (topo->topo == NULL) {
         printf("Pilha Vazia\n");
-        return -1; 
+        return -1;
     }
-    Pilha *atual = *pilha;
+    Pilha *atual = topo->topo;
     int valor = atual->num;
-    *pilha = atual->prox;
+    topo->topo = atual->prox;
     free(atual);
     return valor;
 }
 
-void ver_tam(Pilha **pilha1, Pilha **pilha2, int *tam1, int *tam2) {
-    Pilha *atual1 = *pilha1;
-    Pilha *atual2 = *pilha2;
+void ver_tam(Topo *topo1, Topo *topo2, int *tam1, int *tam2) {
+    Pilha *atual1 = topo1->topo;
+    Pilha *atual2 = topo2->topo;
     int cont1 = 0;
     int cont2 = 0;
     while (atual1 != NULL) {
@@ -72,14 +69,14 @@ void ver_tam(Pilha **pilha1, Pilha **pilha2, int *tam1, int *tam2) {
     *tam2 = cont2;
 }
 
-int pilhas_iguais(Pilha **pilha1, Pilha **pilha2) {
+int pilhas_iguais(Topo *topo1, Topo *topo2) {
     int tam1, tam2;
-    ver_tam(pilha1, pilha2, &tam1, &tam2);
+    ver_tam(topo1, topo2, &tam1, &tam2);
     if (tam1 != tam2) {
         return 0;
     }
-    Pilha *atual1 = *pilha1;
-    Pilha *atual2 = *pilha2;
+    Pilha *atual1 = topo1->topo;
+    Pilha *atual2 = topo2->topo;
     while (atual1 != NULL && atual2 != NULL) {
         if (atual1->num != atual2->num) {
             return 0;
@@ -90,29 +87,27 @@ int pilhas_iguais(Pilha **pilha1, Pilha **pilha2) {
     return 1;
 }
 
-void maiores_que(Pilha **pilha, int valor){
-    if (*pilha == NULL)
-    {
+void maiores_que(Topo *topo, int valor) {
+    if (topo->topo == NULL) {
         printf("Pilha Vazia\n");
         return;
     }
 
-    Pilha *atual = *pilha;
-    Pilha *maiores = NULL;
-    while (atual != NULL)
-    {
-        if (atual->num > valor)
-        {
+    Pilha *atual = topo->topo;
+    Topo maiores = {NULL};
+    while (atual != NULL) {
+        if (atual->num > valor) {
             adicionar(&maiores, atual->num);
         }
         atual = atual->prox;
     }
 
-    listar(maiores);
+    listar(&maiores);
 }
+
 int main() {
-    Pilha *pilha1 = NULL;
-    Pilha *pilha2 = NULL;
+    Topo pilha1 = {NULL};
+    Topo pilha2 = {NULL};
     int opcao, valor;
 
     while (1) {
@@ -138,11 +133,11 @@ int main() {
                 break;
             case 3:
                 printf("Pilha 1: ");
-                listar(pilha1);
+                listar(&pilha1);
                 break;
             case 4:
                 printf("Pilha 2: ");
-                listar(pilha2);
+                listar(&pilha2);
                 break;
             case 5:
                 valor = pop(&pilha1);
@@ -171,10 +166,10 @@ int main() {
                 break;
             case 9:
                 printf("Saindo...\n");
-                while (pilha1 != NULL) {
+                while (pilha1.topo != NULL) {
                     pop(&pilha1);
                 }
-                while (pilha2 != NULL) {
+                while (pilha2.topo != NULL) {
                     pop(&pilha2);
                 }
                 exit(0);

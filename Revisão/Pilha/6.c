@@ -2,76 +2,73 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct Pilha{
+typedef struct Pilha {
     int num;
     struct Pilha *prox;
-}Pilha;
+} Pilha;
 
-void adicionar (Pilha **pilha, int valor){
+typedef struct Topo {
+    Pilha *topo;
+} Topo;
+
+void adicionar(Topo *topo, int valor) {
     Pilha *no = (Pilha *)malloc(sizeof(Pilha));
     no->num = valor;
-    no->prox = *pilha;
-    *pilha = no;
+    no->prox = topo->topo;
+    topo->topo = no;
 }
 
-void criar(Pilha **pilha){
+void criar(Topo *topo) {
     int num;
-    while (scanf("%d\n", &num) == 1)
-    {
-        adicionar(pilha, num);
+    while (scanf("%d", &num) == 1) {
+        adicionar(topo, num);
     }
     while (getchar() != '\n')
         ;
 }
 
-
-void listar(Pilha *pilha)
-{
-    if (pilha == NULL)
-    {
-        printf("Pilha Vazia");
+void listar(Topo *topo) {
+    if (topo->topo == NULL) {
+        printf("Pilha Vazia\n");
         return;
     }
-    Pilha *atual = pilha;
-    do
-    {
+    Pilha *atual = topo->topo;
+    while (atual != NULL) {
         printf("%d -> ", atual->num);
         atual = atual->prox;
-    } while (atual != NULL);
+    }
     printf("INICIO\n");
 }
 
-int pop(Pilha **pilha)
-{
-    if (*pilha == NULL)
-    {
+int pop(Topo *topo) {
+    if (topo->topo == NULL) {
         printf("Pilha Vazia\n");
-        return -1; 
+        return -1;
     }
-    Pilha *atual = *pilha;
+    Pilha *atual = topo->topo;
     int valor = atual->num;
-    *pilha = atual->prox;
+    topo->topo = atual->prox;
     free(atual);
     return valor;
 }
 
-void aaaa(Pilha **pilha1, Pilha **pilha2) {
-    if (*pilha1 == NULL || *pilha2 == NULL) {
+void remover_comuns(Topo *topo1, Topo *topo2) {
+    if (topo1->topo == NULL || topo2->topo == NULL) {
         printf("Uma das pilhas está vazia\n");
         return;
     }
 
-    Pilha *atual1 = *pilha1;
+    Pilha *atual1 = topo1->topo;
     Pilha *anterior1 = NULL;
 
     while (atual1 != NULL) {
-        Pilha *atual2 = *pilha2;
+        Pilha *atual2 = topo2->topo;
 
         while (atual2 != NULL) {
             if (atual1->num == atual2->num) {
                 Pilha *temp = atual1;
                 if (anterior1 == NULL) {
-                    *pilha1 = atual1->prox;
+                    topo1->topo = atual1->prox;
                 } else {
                     anterior1->prox = atual1->prox;
                 }
@@ -88,12 +85,12 @@ void aaaa(Pilha **pilha1, Pilha **pilha2) {
         }
     }
 
-    listar(*pilha1);
+    listar(topo1);
 }
 
 int main() {
-    Pilha *pilha1 = NULL;
-    Pilha *pilha2 = NULL;
+    Topo topo1 = {NULL};
+    Topo topo2 = {NULL};
     int opcao;
 
     while (1) {
@@ -109,21 +106,21 @@ int main() {
 
         switch (opcao) {
             case 1:
-                criar(&pilha1);
+                criar(&topo1);
                 break;
             case 2:
-                criar(&pilha2);
+                criar(&topo2);
                 break;
             case 3:
                 printf("Pilha 1: ");
-                listar(pilha1);
+                listar(&topo1);
                 break;
             case 4:
                 printf("Pilha 2: ");
-                listar(pilha2);
+                listar(&topo2);
                 break;
             case 5:
-                aaaa(&pilha1, &pilha2);
+                remover_comuns(&topo1, &topo2);
                 break;
             case 6:
                 printf("Saindo...\n");

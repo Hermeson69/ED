@@ -2,39 +2,42 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct Pilha
-{
+typedef struct Pilha {
     int num;
     struct Pilha *prox;
 } Pilha;
 
-void adicionar(Pilha **pilha, int valor)
+typedef struct Topo {
+    Pilha *topo;
+} Topo;
+
+void adicionar(Topo *topo, int valor)
 {
     Pilha *no = (Pilha *)malloc(sizeof(Pilha));
     no->num = valor;
-    no->prox = *pilha;
-    *pilha = no;
+    no->prox = topo->topo;
+    topo->topo = no;
 }
 
-void criar(Pilha **pilha)
+void criar(Topo *topo)
 {
     int num;
     while (scanf("%d", &num) == 1)
     {
-        adicionar(pilha, num);
+        adicionar(topo, num);
     }
     while (getchar() != '\n')
         ;
 }
 
-void listar(Pilha *pilha)
+void listar(Topo *topo)
 {
-    if (pilha == NULL)
+    if (topo->topo == NULL)
     {
-        printf("Pilha Vazia");
+        printf("Pilha Vazia\n");
         return;
     }
-    Pilha *atual = pilha;
+    Pilha *atual = topo->topo;
     while (atual != NULL)
     {
         printf("%d -> ", atual->num);
@@ -43,56 +46,56 @@ void listar(Pilha *pilha)
     printf("INICIO\n");
 }
 
-int remover(Pilha **pilha)
+int remover(Topo *topo)
 {
-    if (*pilha == NULL)
+    if (topo->topo == NULL)
     {
         printf("Pilha Vazia\n");
-        return 1;
+        return -1;
     }
-    Pilha *atual = *pilha;
+    Pilha *atual = topo->topo;
     int valor = atual->num;
-    *pilha = atual->prox;
+    topo->topo = atual->prox;
     free(atual);
     return valor;
 }
 
-void positivos_negativos(Pilha **pilha)
+void positivos_negativos(Topo *topo)
 {
-    Pilha *positivos = NULL;
-    Pilha *negativos = NULL;
-    if (*pilha == NULL)
+    Topo positivos = {NULL};
+    Topo negativos = {NULL};
+    if (topo->topo == NULL)
     {
         printf("Pilha Vazia\n");
         return;
     }
 
-    Pilha *atual = *pilha;
+    Pilha *atual = topo->topo;
     while (atual != NULL)
     {
         if (atual->num > 0)
         {
             adicionar(&positivos, atual->num);
         }
-        if(atual->num < 0)
+        if (atual->num < 0)
         {
             adicionar(&negativos, atual->num);
         }
         atual = atual->prox;
     }
 
-    listar(positivos);
-    listar(negativos);
-    while (*pilha != NULL)
+    listar(&positivos);
+    listar(&negativos);
+    while (topo->topo != NULL)
     {
-        remover(pilha);
+        remover(topo);
     }
 
-    while (positivos != NULL)
+    while (positivos.topo != NULL)
     {
         remover(&positivos);
     }
-    while (negativos != NULL)
+    while (negativos.topo != NULL)
     {
         remover(&negativos);
     }
@@ -100,7 +103,7 @@ void positivos_negativos(Pilha **pilha)
 
 int main()
 {
-    Pilha *pilha = NULL;
+    Topo topo = {NULL};
     int opcao, valor;
 
     do
@@ -118,20 +121,20 @@ int main()
         {
         case 1:
             printf("Digite um valor: ");
-            criar(&pilha);
+            criar(&topo);
             break;
         case 2:
-            listar(pilha);
+            listar(&topo);
             break;
         case 3:
-            valor = remover(&pilha);
+            valor = remover(&topo);
             if (valor != -1)
             {
                 printf("Elemento removido: %d\n", valor);
             }
             break;
         case 4:
-            positivos_negativos(&pilha);
+            positivos_negativos(&topo);
             break;
         case 0:
             printf("Saindo...\n");
@@ -141,9 +144,9 @@ int main()
         }
     } while (opcao != 0);
 
-    while (pilha != NULL)
+    while (topo.topo != NULL)
     {
-        remover(&pilha);
+        remover(&topo);
     }
 
     return 0;

@@ -7,27 +7,31 @@ typedef struct Pilha {
     struct Pilha *prox;
 } Pilha;
 
-void adicionar(Pilha **pilha, int valor) {
+typedef struct Topo {
+    Pilha *topo;
+} Topo;
+
+void adicionar(Topo *topo, int valor) {
     Pilha *no = (Pilha *)malloc(sizeof(Pilha));
     no->num = valor;
-    no->prox = *pilha;
-    *pilha = no;
+    no->prox = topo->topo;
+    topo->topo = no;
 }
 
-void criar(Pilha **pilha) {
+void criar(Topo *topo) {
     int num;
     while (scanf("%d", &num) == 1) {
-        adicionar(pilha, num);
+        adicionar(topo, num);
     }
     while (getchar() != '\n');
 }
 
-void listar(Pilha *pilha) {
-    if (pilha == NULL) {
+void listar(Topo *topo) {
+    if (topo->topo == NULL) {
         printf("Pilha Vazia\n");
         return;
     }
-    Pilha *atual = pilha;
+    Pilha *atual = topo->topo;
     while (atual != NULL) {
         printf("%d -> ", atual->num);
         atual = atual->prox;
@@ -35,14 +39,14 @@ void listar(Pilha *pilha) {
     printf("INICIO\n");
 }
 
-int remover(Pilha **pilha) {
-    if (*pilha == NULL) {
+int remover(Topo *topo) {
+    if (topo->topo == NULL) {
         printf("Pilha Vazia\n");
         return -1;
     }
-    Pilha *atual = *pilha;
+    Pilha *atual = topo->topo;
     int valor = atual->num;
-    *pilha = atual->prox;
+    topo->topo = atual->prox;
     free(atual);
     return valor;
 }
@@ -59,15 +63,15 @@ int primo(int valor) {
     return 1;
 }
 
-void primos_nao(Pilha **pilha) {
-    Pilha *primos = NULL;
-    Pilha *original = NULL;
-    if (*pilha == NULL) {
+void primos_nao(Topo *topo) {
+    Topo primos = {NULL};
+    Topo original = {NULL};
+    if (topo->topo == NULL) {
         printf("Pilha Vazia\n");
         return;
     }
 
-    Pilha *atual = *pilha;
+    Pilha *atual = topo->topo;
     while (atual != NULL) {
         if (primo(atual->num)) {
             adicionar(&primos, atual->num);
@@ -78,24 +82,24 @@ void primos_nao(Pilha **pilha) {
     }
 
     printf("Primos:\n");
-    listar(primos);
+    listar(&primos);
     printf("Nao Primos:\n");
-    listar(original);
+    listar(&original);
 
-    while (*pilha != NULL) {
-        remover(pilha);
+    while (topo->topo != NULL) {
+        remover(topo);
     }
 
-    while (primos != NULL) {
+    while (primos.topo != NULL) {
         remover(&primos);
     }
-    while (original != NULL) {
+    while (original.topo != NULL) {
         remover(&original);
     }
 }
 
 int main() {
-    Pilha *pilha = NULL;
+    Topo topo = {NULL};
     int opcao, valor;
 
     do {
@@ -111,19 +115,19 @@ int main() {
         switch (opcao) {
             case 1:
                 printf("Digite um valor: ");
-                criar(&pilha);
+                criar(&topo);
                 break;
             case 2:
-                listar(pilha);
+                listar(&topo);
                 break;
             case 3:
-                valor = remover(&pilha);
+                valor = remover(&topo);
                 if (valor != -1) {
                     printf("Elemento removido: %d\n", valor);
                 }
                 break;
             case 4:
-                primos_nao(&pilha);
+                primos_nao(&topo);
                 break;
             case 5:
                 printf("Saindo...\n");

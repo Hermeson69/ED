@@ -7,27 +7,31 @@ typedef struct Pilha {
     struct Pilha *prox;
 } Pilha;
 
-void adicionar(Pilha **pilha, int valor) {
+typedef struct Topo {
+    Pilha *topo;
+} Topo;
+
+void adicionar(Topo *topo, int valor) {
     Pilha *no = (Pilha *)malloc(sizeof(Pilha));
     no->num = valor;
-    no->prox = *pilha;
-    *pilha = no;
+    no->prox = topo->topo;
+    topo->topo = no;
 }
 
-void criar(Pilha **pilha) {
+void criar(Topo *topo) {
     int num;
     while (scanf("%d", &num) == 1) {
-        adicionar(pilha, num);
+        adicionar(topo, num);
     }
     while (getchar() != '\n');
 }
 
-void listar(Pilha *pilha) {
-    if (pilha == NULL) {
+void listar(Topo *topo) {
+    if (topo->topo == NULL) {
         printf("Pilha Vazia\n");
         return;
     }
-    Pilha *atual = pilha;
+    Pilha *atual = topo->topo;
     do {
         printf("%d -> ", atual->num);
         atual = atual->prox;
@@ -35,33 +39,33 @@ void listar(Pilha *pilha) {
     printf("INICIO\n");
 }
 
-int remover(Pilha **pilha) {
-    if (*pilha == NULL) {
+int remover(Topo *topo) {
+    if (topo->topo == NULL) {
         printf("Pilha Vazia\n");
         return -1;
     }
-    Pilha *atual = *pilha;
+    Pilha *atual = topo->topo;
     int valor = atual->num;
-    *pilha = atual->prox;
+    topo->topo = atual->prox;
     free(atual);
     return valor;
 }
 
 void num_mod(int n) {
-    Pilha *mods = NULL;
+    Topo mods = {NULL};
     for (int i = 1; i <= n; i++) {
         if (n % i == 0) {
             adicionar(&mods, i);
         }
     }
-    listar(mods);
-    while (mods != NULL) {
+    listar(&mods);
+    while (mods.topo != NULL) {
         remover(&mods);
     }
 }
 
 int main() {
-    Pilha *pilha = NULL;
+    Topo topo = {NULL};
     int opcao, valor;
 
     do {
@@ -78,20 +82,20 @@ int main() {
         switch (opcao) {
             case 1:
                 printf("Digite um valor: ");
-                criar(&pilha);
+                criar(&topo);
                 break;
             case 2:
-                listar(pilha);
+                listar(&topo);
                 break;
             case 3:
-                valor = remover(&pilha);
+                valor = remover(&topo);
                 if (valor != -1) {
                     printf("Valor removido: %d\n", valor);
                 }
                 break;
             case 4:
                 printf("Digite os valores (Ctrl+D para finalizar): ");
-                criar(&pilha);
+                criar(&topo);
                 break;
             case 5:
                 printf("Digite um valor N: ");
@@ -106,8 +110,8 @@ int main() {
         }
     } while (opcao != 0);
 
-    while (pilha != NULL) {
-        remover(&pilha);
+    while (topo.topo != NULL) {
+        remover(&topo);
     }
 
     return 0;
