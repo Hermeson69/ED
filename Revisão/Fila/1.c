@@ -17,7 +17,7 @@ typedef struct Fila
 No *criar_no(int valor)
 {
     No *no = (No *)malloc(sizeof(No));
-    if (!no)
+    if (!no)  
     {
         printf("Erro no Malloc\n");
         exit(-1);
