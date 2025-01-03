@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TAM 10
+#define TAM 4
 
 typedef struct Lista
 {
@@ -372,10 +372,13 @@ int main()
             printf("Digite o valor a ser adicionado: ");
             scanf("%d", &valor);
             adicionar_elemento(&list_encadeda, valor);
+            bubble_sort(&list_encadeda);
+            printar(list_encadeda);
             break;
         case 3:
             printf("Digite o valor a ser adicionado no inicio: ");
             scanf("%d", &valor);
+            bubble_sort(&list_encadeda);
             adicionar_elemento(&list_encadeda, valor);
             break;
         case 4:

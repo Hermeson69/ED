@@ -5,35 +5,25 @@
 typedef struct Lista
 {
     int num;
-    int posicao;
     struct Lista *prox;
 } Lista;
 
-void *iniciar()
-{
-    return NULL;
-}
-
-void adicionar(Lista **lista, int valor)
+void add(Lista **lista, int valor)
 {
     Lista *no = (Lista *)malloc(sizeof(Lista));
     no->num = valor;
     if (*lista == NULL)
     {
-        no->posicao = 0;
         *lista = no;
         no->prox = *lista;
     }
     else
     {
-        int cont = 1;
         Lista *atual = *lista;
         while (atual->prox != *lista)
         {
-            cont++;
             atual = atual->prox;
         }
-        no->posicao = cont;
         atual->prox = no;
         no->prox = *lista;
     }
@@ -44,46 +34,38 @@ void criar(Lista **lista)
     int num;
     while (scanf("%d", &num) == 1)
     {
-        adicionar(lista, num);
+        add(lista, num);
     }
     while (getchar() != '\n')
         ;
 }
 
-int listar(Lista *lista)
+void listar(Lista *lista)
 {
     if (lista == NULL)
     {
-        printf("Lista Vazia\n");
-        return 0;
+        return;
     }
-
-    int cont = 0;
     Lista *inicio = lista;
     do
     {
-        cont++;
-        printf("%d: %d -> ", lista->posicao, lista->num);
+        printf("%d -> ", lista->num);
         lista = lista->prox;
     } while (lista != inicio);
     printf("INICIO\n");
-
-    return cont;
 }
 
-void remover(Lista **lista, int valor)
+void remover(Lista **lista, int num)
 {
     if (*lista == NULL)
     {
-        printf("Lista Vazia\n");
         return;
     }
     Lista *atual = *lista;
     Lista *ante = NULL;
-
     do
     {
-        if (atual->num == valor)
+        if (atual->num == num)
         {
             if (ante == NULL)
             {
@@ -130,41 +112,46 @@ void liberar(Lista **lista)
         free(atual);
         atual = proximo;
     } while (atual != *lista);
-
     *lista = NULL;
 }
 
-int pulo(Lista **lista, int n)
+int primo(int n)
 {
-    if (*lista == NULL)
+    if (n < 2)
     {
-        printf("Lista Vazia\n");
-        return -1;
+        return 0;
     }
-
-    Lista *atual = *lista;
-    Lista *ante = NULL;
-
-    while ((*lista)->prox != *lista)
+    for (int i = 2; i * i <= n; i++)
     {
-        for (int i = 1; i <= n; i++)
+        if (n % i == 0)
         {
-            ante = atual;
-            atual = atual->prox;
+            return 0;
         }
-        remover(lista, atual->num);
-        atual = ante->prox;
     }
+    return 1;
+}
 
-    int last_position = (*lista)->num;
-    printf("Last position is: %d\n", last_position);
-    return last_position;
+void criar_lista_primos(Lista **lista, int tamanho)
+{
+    liberar(lista); // Clear the existing list
+    int num = 2;
+    int cont = 0;
+
+    while (cont < tamanho)
+    {
+        if (primo(num))
+        {
+            add(lista, num);
+            cont++;
+        }
+        num++;
+    }
 }
 
 int main()
 {
-    Lista *lista = iniciar();
-    int opcao, valor, n;
+    Lista *lista = NULL;
+    int opcao, valor, tamanho;
 
     do
     {
@@ -172,17 +159,20 @@ int main()
         printf("1. Adicionar elemento\n");
         printf("2. Listar elementos\n");
         printf("3. Remover elemento\n");
-        printf("4. Liberar lista\n");
-        printf("5. Pulo\n");
+        printf("4. Criar lista de primos\n");
+        printf("5. Liberar lista\n");
         printf("0. Sair\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
+        while (getchar() != '\n'); // Clear input buffer
 
         switch (opcao)
         {
         case 1:
             printf("Digite um valor para adicionar: ");
-            criar(&lista);
+            scanf("%d", &valor);
+            while (getchar() != '\n'); // Clear input buffer
+            add(&lista, valor);
             break;
         case 2:
             listar(lista);
@@ -190,16 +180,18 @@ int main()
         case 3:
             printf("Digite um valor para remover: ");
             scanf("%d", &valor);
+            while (getchar() != '\n'); // Clear input buffer
             remover(&lista, valor);
             break;
         case 4:
-            liberar(&lista);
-            printf("Lista liberada\n");
+            printf("Digite o tamanho da lista de primos: ");
+            scanf("%d", &tamanho);
+            while (getchar() != '\n'); // Clear input buffer
+            criar_lista_primos(&lista, tamanho);
             break;
         case 5:
-            printf("Digite o valor de n para o pulo: ");
-            scanf("%d", &n);
-            pulo(&lista, n);
+            liberar(&lista);
+            printf("Lista liberada.\n");
             break;
         case 0:
             liberar(&lista);
