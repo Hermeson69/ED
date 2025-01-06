@@ -291,23 +291,115 @@ void inverter_intervalo(Lsd **lista, int x, int y)
 
     while (atual != NULL)
     {
-         temp = atual->prox;
+        temp = atual->prox;
         atual->prox = atual->anter;
         atual->anter = temp;
         atual = temp;
     }
-    
+
     if (prox != NULL)
     {
         prox->prox = fim;
-    }else{
+    }
+    else
+    {
         *lista = fim;
     }
     if (anter != NULL)
     {
         anter->anter = inicio;
     }
-    
+
     inicio->prox = anter;
     fim->anter = prox;
+}
+
+void remover_intervalo(Lsd **lista, int x, int y)
+{
+    if (*lista == NULL)
+    {
+        exit(-1);
+    }
+    Lsd *atual = *lista;
+    Lsd *inicio = NULL;
+    Lsd *fim = NULL;
+
+    while (atual != NULL)
+    {
+        if (atual->num = x)
+        {
+            inicio = atual;
+        }
+        if (atual->num = y)
+        {
+            fim = atual;
+        }
+
+        atual = atual->prox;
+    }
+
+    if (inicio == NULL || fim == NULL || inicio == fim)
+    {
+        return;
+    }
+
+    Lsd *temp = inicio;
+    while (temp != fim->prox)
+    {
+        Lsd *proximo = temp->prox;
+        if (temp->anter != NULL)
+        {
+            temp->anter->prox = temp->prox;
+        }
+        else
+        {
+            *lista = temp->prox;
+        }
+        if (temp->prox != NULL)
+        {
+            temp->prox->anter = temp->anter;
+        }
+        free(temp);
+        temp = proximo;
+    }
+}
+
+int primo(int n)
+{
+    if (n < 2)
+    {
+        return 0;
+    }
+
+    for (int i = 2; i * i <= n; i++)
+    {
+        if (n % i == 0)
+        {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+void add_depois_primos(Lsd **lista, int valor)
+{
+    Lsd *atual = *lista;
+    while (atual != NULL)
+    {
+        if (primo(atual->num))
+        {
+            Lsd *novo_no = (Lsd *)malloc(sizeof(Lsd));
+            novo_no->num = valor;
+            novo_no->prox = atual->prox;
+            novo_no->anter = atual;
+            if (atual->prox != NULL)
+            {
+                atual->prox->anter = novo_no;
+            }
+            atual->prox = novo_no;
+            atual = novo_no->prox;
+        }
+        atual = atual->prox;
+    }
 }
