@@ -230,7 +230,8 @@ void rotacionar(Lsd **lista, int n)
     atual->prox = NULL;
 }
 // SEXTA
-int polidromia(Lsd *lista){
+int polidromia(Lsd *lista)
+{
     if (lista == NULL)
     {
         return -1;
@@ -253,3 +254,60 @@ int polidromia(Lsd *lista){
     return 1;
 }
 // SETIMA
+
+void inverter_intervalo(Lsd **lista, int x, int y)
+{
+    if (*lista == NULL)
+    {
+        exit(-1);
+    }
+    Lsd *atual = *lista;
+    Lsd *inicio = NULL;
+    Lsd *fim = NULL;
+
+    while (atual != NULL)
+    {
+        if (atual->num = x)
+        {
+            inicio = atual;
+        }
+        if (atual->num = y)
+        {
+            fim = atual;
+        }
+
+        atual = atual->prox;
+    }
+
+    if (inicio == NULL || fim == NULL || inicio == fim)
+    {
+        return;
+    }
+
+    Lsd *prox = inicio->anter;
+    Lsd *anter = fim->prox;
+    atual = inicio;
+    Lsd *temp = NULL;
+
+    while (atual != NULL)
+    {
+         temp = atual->prox;
+        atual->prox = atual->anter;
+        atual->anter = temp;
+        atual = temp;
+    }
+    
+    if (prox != NULL)
+    {
+        prox->prox = fim;
+    }else{
+        *lista = fim;
+    }
+    if (anter != NULL)
+    {
+        anter->anter = inicio;
+    }
+    
+    inicio->prox = anter;
+    fim->anter = prox;
+}
