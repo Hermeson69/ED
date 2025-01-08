@@ -259,6 +259,35 @@ Fila *concatenar_filas(Fila *fila1, Fila *fila2) {
 }
 
 
+void nona(Fila **inicio, int n) {
+    No *atual = (*inicio)->frente;
+    Fila *FilaSoma = iniciar();
+    No *temp = atual;
+    int soma = 0;
+    int count = 0;
+
+    while (temp != NULL && count < n) {
+        soma += temp->num;
+        temp = temp->prox;
+        count++;
+    }
+
+    if (count == n) {
+        add(&FilaSoma, soma);
+    }
+
+    while (temp != NULL) {
+        soma += temp->num - atual->num;
+        add(&FilaSoma, soma);
+        atual = atual->prox;
+        temp = temp->prox;
+    }
+
+    printar(FilaSoma);
+}
+
+
+
 int main()
 {
     Fila *fila = inicializar();

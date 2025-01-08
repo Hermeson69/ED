@@ -13,6 +13,12 @@ typedef struct Topo
     Pilha *topo;
 } Topo;
 
+Topo *criar_pilha(){
+    Topo *topo = (Topo *)malloc(sizeof(Topo));
+    topo->topo = NULL;
+    return topo;
+}
+
 void add(Topo *topo, int valor)
 {
     Pilha *no = (Pilha *)malloc(sizeof(Pilha));
@@ -115,17 +121,21 @@ void maiores_que(Topo *topo, int n)
         return;
     }
     Pilha *atual = topo->topo;
-    Topo maiores;
-    maiores.topo = NULL;
+    Topo *maiores = criar_pilha();
     while (atual != NULL)
     {
         if (atual->num > n)
         {
-            add(&maiores, atual->num);
+            add(maiores, atual->num);
         }
         atual = atual->prox;
     }
-    listar(&maiores);
+    listar(maiores);
+    while (maiores->topo != NULL)
+    {
+        pop(maiores);
+    }
+    free(maiores);
 }
 
 void remover_pilha1(Topo *topo1, Topo *topo2)
@@ -136,8 +146,7 @@ void remover_pilha1(Topo *topo1, Topo *topo2)
         return;
     }
 
-    Topo temp;
-    temp.topo = NULL;
+    Topo *temp = criar_pilha();
 
     while (topo1->topo != NULL)
     {
@@ -158,16 +167,17 @@ void remover_pilha1(Topo *topo1, Topo *topo2)
 
         if (!encontrado)
         {
-            add(&temp, valor);
+            add(temp, valor);
         }
     }
 
-    while (temp.topo != NULL)
+    while (temp->topo != NULL)
     {
-        add(topo1, pop(&temp));
+        add(topo1, pop(temp));
     }
 
     listar(topo1);
+    free(temp);
 }
 
 int contem(Topo *topo, int num)
@@ -192,47 +202,48 @@ void remover(Topo *topo)
         return;
     }
 
-    Topo aux;
-    aux.topo = NULL;
+    Topo *aux = criar_pilha();
 
     while (topo->topo != NULL)
     {
         int num = pop(topo);
-        if (!contem(&aux, num))
+        if (!contem(aux, num))
         {
-            add(&aux, num);
+            add(aux, num);
         }
     }
 
-    while (aux.topo != NULL)
+    while (aux->topo != NULL)
     {
-        add(topo, pop(&aux));
+        add(topo, pop(aux));
     }
 
     listar(topo);
+    free(aux);
 }
 
 void num_mod(int n)
 {
-    Topo mods = {NULL};
+    Topo *mods = criar_pilha();
     for (int i = 1; i <= n; i++)
     {
         if (n % i == 0)
         {
-            add(&mods, i);
+            add(mods, i);
         }
     }
-    listar(&mods);
-    while (mods.topo != NULL)
+    listar(mods);
+    while (mods->topo != NULL)
     {
-        pop(&mods);
+        pop(mods);
     }
+    free(mods);
 }
 
 void positivos_negativos(Topo *topo)
 {
-    Topo positivos = {NULL};
-    Topo negativos = {NULL};
+    Topo *positivos = criar_pilha();
+    Topo *negativos = criar_pilha();
     if (topo->topo == NULL)
     {
         printf("Pilha Vazia\n");
@@ -244,31 +255,32 @@ void positivos_negativos(Topo *topo)
     {
         if (atual->num > 0)
         {
-            add(&positivos, atual->num);
+            add(positivos, atual->num);
         }
         if (atual->num < 0)
         {
-            add(&negativos, atual->num);
+            add(negativos, atual->num);
         }
         atual = atual->prox;
     }
-    listar(&positivos);
-    listar(&negativos);
+    listar(positivos);
+    listar(negativos);
 
     while (topo->topo != NULL)
     {
         pop(topo);
     }
 
-    while (positivos.topo != NULL)
+    while (positivos->topo != NULL)
     {
-        pop(&positivos);
+        pop(positivos);
     }
-
-    while (negativos.topo != NULL)
+    while (negativos->topo != NULL)
     {
-        pop(&negativos);
+        pop(negativos);
     }
+    free(positivos);
+    free(negativos);
 }
 
 int primo(int n)
@@ -291,8 +303,8 @@ int primo(int n)
 
 void primos_nao(Topo *topo)
 {
-    Topo primos = {NULL};
-    Topo nao_primos = {NULL};
+    Topo *primos = criar_pilha();
+    Topo *nao_primos = criar_pilha();
     if (topo->topo == NULL)
     {
         printf("Pilha Vazia\n");
@@ -304,26 +316,28 @@ void primos_nao(Topo *topo)
     {
         if (primo(atual->num))
         {
-            add(&primos, atual->num);
+            add(primos, atual->num);
         }
         else
         {
-            add(&nao_primos, atual->num);
+            add(nao_primos, atual->num);
         }
         atual = atual->prox;
     }
 
-    listar(&primos);
-    listar(&nao_primos);
+    listar(primos);
+    listar(nao_primos);
 
-    while (primos.topo != NULL)
+    while (primos->topo != NULL)
     {
-        pop(&primos);
+        pop(primos);
     }
-    while (nao_primos.topo != NULL)
+    while (nao_primos->topo != NULL)
     {
-        pop(&nao_primos);
+        pop(nao_primos);
     }
+    free(primos);
+    free(nao_primos);
 }
 
 int main()

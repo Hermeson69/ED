@@ -4,7 +4,7 @@
 
 typedef struct Pilha
 {
-    int num;
+    char nome;
     struct Pilha *prox;
 } Pilha;
 
@@ -13,23 +13,28 @@ typedef struct Topo
     Pilha *topo;
 } Topo;
 
-void add(Topo *topo, int valor)
+Topo *criar_pilha(){
+    Topo *topo = (Topo *)malloc(sizeof(Topo));
+    topo->topo = NULL;
+    return topo;
+}
+
+void add(Topo *topo, char valor)
 {
-    Pilha *no = (Pilha *)malloc(sizeof(Pilha));
-    no->num = valor;
-    no->prox = topo->topo;
-    topo->topo = no;
+    Pilha *novo = malloc(sizeof(Pilha)); // tem que manter o ponteiro do topo atualizado
+
+    novo->nome = valor;
+    novo->prox = topo->topo;
+    topo->topo = novo;
 }
 
 void criar(Topo *topo)
 {
-    int num;
-    while (scanf("%d", &num) == 1)
-    {
-        add(topo, num);
+    char caractere;
+
+    while (scanf(" %c", &caractere) == 1 && caractere != '1'){
+        add(topo, caractere);
     }
-    while (getchar() != '\n')
-        ;
 }
 
 void listar(Topo *topo)
@@ -41,7 +46,7 @@ void listar(Topo *topo)
     }
     while (atual != NULL)
     {
-        printf("%d -> ", atual->num);
+        printf("%c -> ", atual->nome);
         atual = atual->prox;
     }
     printf("INICIO\n");
@@ -72,31 +77,135 @@ void liberar(Topo *topo)
     {
         remover(topo);
     }
-    free(topo);
     topo->topo = NULL;
 }
 
-void binario(int num)
+void remover_repetidos(Topo *topo)
 {
-    Topo binario = {NULL};
-    if (num == 0)
+    Pilha *atual = topo->topo;
+    while (atual != NULL && atual->prox != NULL)
     {
-        add(&binario, num);
-    }
-    else
-    {
-        while (num > 0)
+        Pilha *anterior = atual;
+        Pilha *comparar = atual->prox;
+        while (comparar != NULL)
         {
-            add(&binario, num % 2);
-            num /= 2;
+            if (atual->nome == comparar->nome)
+            {
+                anterior->prox = comparar->prox;
+                free(comparar);
+                comparar = anterior->prox;
+            }
+            else
+            {
+                anterior = comparar;
+                comparar = comparar->prox;
+            }
         }
+        atual = atual->prox;
     }
-
-    listar(&binario);
-    while (binario.topo != NULL)
-    {
-        remover(&binario);
-    }
-    
 }
 
+void inverter(Topo *topo)
+{
+    Pilha *anterior = NULL;
+    Pilha *atual = topo->topo;
+    Pilha *proximo = NULL;
+    while (atual != NULL)
+    {
+        proximo = atual->prox;
+        atual->prox = anterior;
+        anterior = atual;
+        atual = proximo;
+    }
+    topo->topo = anterior;
+}
+
+void inverter_palavras(char *frase)
+{
+    Topo *pilha = criar_pilha();
+    char *palavra = strtok(frase, " ");
+    
+    while (palavra != NULL)
+    {
+        for (int i = 0; i < strlen(palavra); i++)
+        {
+            add(pilha, palavra[i]);
+        }
+        while (pilha->topo != NULL)
+        {
+            printf("%c", pilha->topo->nome);
+            remover(pilha);
+        }
+        printf(" ");
+        palavra = strtok(NULL, " ");
+    }
+    liberar(pilha);
+    free(pilha);
+}
+
+int main()
+{
+    Topo *minhaPilha = criar_pilha(); // Criação da pilha
+    int opcao;
+    char frase[100];
+
+    do
+    {
+        printf("\n=== MENU ===\n");
+        printf("1 - Adicionar elemento na pilha\n");
+        printf("2 - Listar elementos da pilha\n");
+        printf("3 - Remover elemento do topo da pilha\n");
+        printf("4 - Liberar toda a pilha\n");
+        printf("5 - Remover elementos repetidos\n");
+        printf("6 - Inverter a pilha\n");
+        printf("7 - Inverter palavras de uma frase\n");
+        printf("0 - Sair\n");
+        printf("Escolha uma opção: ");
+        scanf("%d", &opcao);
+
+        switch (opcao)
+        {
+        case 1:
+            printf("Digite um valor para adicionar à pilha: ");
+            criar(minhaPilha);
+            break;
+        case 2:
+            printf("Elementos da pilha:\n");
+            listar(minhaPilha);
+            break;
+        case 3:
+            printf("Removendo elemento do topo...\n");
+            remover(minhaPilha);
+            break;
+        case 4:
+            printf("Liberando toda a pilha...\n");
+            liberar(minhaPilha);
+            break;
+        case 5:
+            printf("Removendo elementos repetidos...\n");
+            remover_repetidos(minhaPilha);
+            break;
+        case 6:
+            printf("Invertendo a pilha...\n");
+            inverter(minhaPilha);
+            break;
+        case 7:
+            printf("Digite uma frase: ");
+            getchar(); // Limpar o buffer do teclado
+            fgets(frase, sizeof(frase), stdin);
+            frase[strcspn(frase, "\n")] = '\0'; // Remover o caractere de nova linha
+            inverter_palavras(frase);
+            printf("\n");
+            break;
+        case 0:
+            printf("Saindo...\n");
+            liberar(minhaPilha); // Garantir que a pilha seja liberada antes de sair
+            free(minhaPilha);    // Liberar memória do topo
+            break;
+        default:
+            printf("Opção inválida! Tente novamente.\n");
+        }
+    } while (opcao != 0);
+
+    return 0;
+}
